@@ -35,3 +35,10 @@ export async function findMovieTheaters(ids: string[]) {
     .in('movie_id', ids)
   return data
 }
+
+export async function findTheaters() {
+  const { data, error } = await supabase
+    .from('theaters')
+    .select('*')
+  return data
+}
