@@ -18,4 +18,14 @@ export async function findByReleaseDateAfter(today: string) {
   return data
 }
 
+export async function findByReleaseDateBefore(today: string) {
+  //날짜가 오늘 이전인 영화를 찾는다.
+  const { data, error } = await supabase
+    .from('upcoming_movie')
+    .select('title, release_date, poster_path, overview, id')
+    .lte('release_date', today)
+
+  return data
+}
+
 
