@@ -28,4 +28,10 @@ export async function findByReleaseDateBefore(today: string) {
   return data
 }
 
-
+export async function findMovieTheaters(ids: string[]) {
+  const { data, error } = await supabase
+    .from('movie_theaters')
+    .select('theaters_id, movie_id')
+    .in('movie_id', ids)
+  return data
+}
