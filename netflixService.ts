@@ -1,4 +1,4 @@
-import { findByExpiredDateAfter, findNetflixHorrorKr } from "./netflixRepository.ts";
+import { findByExpiredDateAfter, findNetflixHorrorKr, findNetflixHorrorKrById } from "./netflixRepository.ts";
 
 interface ExpiredMovie {
     title: string;
@@ -13,6 +13,13 @@ interface NetflixHorrorKr {
     the_movie_db_id: string;
 }
 
+export interface NetflixHorrorKrById {
+    title: string;
+    poster_path: string;
+    id: string;
+    overview: string;
+}
+
 
 interface NetflixResponse {
     id: string;
@@ -25,6 +32,25 @@ interface NetflixDetailResponse {
     id: string;
     title: string;
     posterPath: string;
+    overview: string;
+}
+
+export async function getNetflixDetailResponse(id: string): Promise<NetflixDetailResponse> {
+    const netflixHorrorKrById = await findNetflixHorrorKrById(id);
+    if (netflixHorrorKrById.id === "Unknown") {
+        return {
+            id: "Unknown",
+            title: "Unknown",
+            posterPath: "Unknown",
+            overview: "Unknown",
+        };
+    }
+    return {
+        id: netflixHorrorKrById.id,
+        title: netflixHorrorKrById.title,
+        posterPath: netflixHorrorKrById.poster_path,
+        overview: netflixHorrorKrById.overview,
+    };
 }
 
 
