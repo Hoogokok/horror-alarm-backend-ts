@@ -13,7 +13,7 @@ const supabase = createClient(
     supabaseKey
 )
 
-async function findByExpiredDateAfter(today: string = new Date().toISOString()) {
+export async function findByExpiredDateAfter(today: string = new Date().toISOString()) {
     //날짜가 오늘 이후인 영화를 찾는다.
     const { data, error } = await supabase
         .from('netflix_horror_expiring')
@@ -22,7 +22,7 @@ async function findByExpiredDateAfter(today: string = new Date().toISOString()) 
     return data
 }
 
-async function findNetflixHorrorKr(the_movie_db_ids: string[]) {
+export async function findNetflixHorrorKr(the_movie_db_ids: string[]) {
     // the_movie_db_id가 있는 넷플릭스 공포 영화를 찾는다.
     const { data, error } = await supabase
         .from('netflix_horror_kr')
