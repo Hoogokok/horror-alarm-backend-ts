@@ -56,21 +56,24 @@ export async function getUpcomingResponse(today: string = new Date().toISOString
     return movies;
 }
 
-function makeMovieResponse(releasingMovies: Movie[], theaters: any[], theaterList: any[]): MovieResponse[] {
+function makeMovieResponse(releasingMovies: Movie[], movieTheaterList: MovieTheater[], theaterList: Theater[]): MovieResponse[] {
     const movies: MovieResponse[] = releasingMovies.map((movie: Movie) => {
-        const movieTheaters = theaters.filter((theater: any) => theater.movie_id === movie.id);
+        const filteredTheaters = movieTheaterList.filter((movieTheater: MovieTheater) => movieTheater.movie_id === movie.id);
         // 상영관 정보를 가져온다.
-        const theatersList = movieTheaters.map((movieTheater: any) => {
-            const theater = theaterList.find((theater: any) => theater.id === movieTheater.theaters_id);
-            return theater.name;
+        const theatersList = filteredTheaters.map((movieTheater: MovieTheater) => {
+            const theater = theaterList.find((theater: Theater) => theater.id === movieTheater.theaters_id);
+            return theater ? theater.name : '';
         });
+        // 빈 문자열을 제거한다.
+        const notBlankTheaters = theatersList.filter((theater: string) => theater !== '');
+
         return {
             id: movie.id,
             title: movie.title,
             release_date: movie.release_date,
             poster_path: movie.poster_path,
             overview: movie.overview,
-            theaters: theatersList
+            theaters: notBlankTheaters
         };
     });
 
