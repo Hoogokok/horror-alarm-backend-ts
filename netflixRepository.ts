@@ -21,3 +21,12 @@ async function findByExpiredDateAfter(today: string = new Date().toISOString()) 
         .gte('expired_date', today)
     return data
 }
+
+async function findNetflixHorrorKr(the_movie_db_ids: string[]) {
+    // the_movie_db_id가 있는 넷플릭스 공포 영화를 찾는다.
+    const { data, error } = await supabase
+        .from('netflix_horror_kr')
+        .select('title, poster_path, id')
+        .in('the_movie_db_id', the_movie_db_ids)
+    return data
+}
