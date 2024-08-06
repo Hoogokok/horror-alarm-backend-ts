@@ -21,8 +21,8 @@ interface MovieTheater {
 interface MovieResponse {
     id: string;
     title: string;
-    release_date: string;
-    poster_path: string;
+    releaseDate: string;
+    posterPath: string;
     overview: string;
     theaters: string[];
 }
