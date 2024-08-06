@@ -21,6 +21,13 @@ interface NetflixResponse {
     expiredDate: string;
 }
 
+interface NetflixDetailResponse {
+    id: string;
+    title: string;
+    posterPath: string;
+}
+
+
 export async function getExpiringResponse(today: string = new Date().toISOString()) {
     // 오늘 이후 만료되는 넷플릭스 영화를 찾는다.
     const expiringMovies = await findByExpiredDateAfter(today);
