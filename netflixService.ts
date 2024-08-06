@@ -55,15 +55,15 @@ function makeNetflixResponse(expiringMovies: ExpiredMovie[], netflixHorrorKr: Ne
             return {
                 id: "Unknown",
                 title: "Unknown",
-                poster_path: "Unknown",
-                expired_date: "Unknown",
+                posterPath: "Unknown",
+                expiredDate: "Unknown",
             };
         }
         return {
             id: netflixHorror.id,
             title: netflixHorror.title,
-            poster_path: netflixHorror.poster_path,
-            expired_date: movie.expired_date
+            posterPath: netflixHorror.poster_path,
+            expiredDate: movie.expired_date
         }
     });
 }
