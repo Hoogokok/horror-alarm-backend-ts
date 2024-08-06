@@ -10,8 +10,7 @@ interface MovieResponse {
     theaters: string[];
 }
 
-
-async function getUpcomingResponse(today: string = new Date().toISOString()) {
+export async function getUpcomingResponse(today: string = new Date().toISOString()) {
     // 오늘 이후 개봉하는 영화를 찾는다.
     const releasingMovies = await findByReleaseDateBefore(today);
     // 개봉하는 영화의 id를 가져온다.
