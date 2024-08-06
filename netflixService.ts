@@ -54,7 +54,7 @@ export async function getNetflixDetailResponse(id: string): Promise<NetflixDetai
 }
 
 
-export async function getExpiringResponse(today: string = new Date().toISOString()) {
+export async function getExpiringResponse(today: string = new Date().toISOString()) : Promise<NetflixResponse[]> {
     // 오늘 이후 만료되는 넷플릭스 영화를 찾는다.
     const expiringMovies = await findByExpiredDateAfter(today);
     // 만료되는 영화가 없으면 빈 배열을 반환한다.
