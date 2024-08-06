@@ -8,6 +8,16 @@ interface Movie {
     overview: string;
 }
 
+interface Theater {
+    id: string;
+    name: string;
+}
+
+interface MovieTheater {
+    theaters_id: string;
+    movie_id: string;
+}
+
 interface MovieResponse {
     id: string;
     title: string;
