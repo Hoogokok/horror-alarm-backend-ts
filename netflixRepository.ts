@@ -32,13 +32,13 @@ export async function findNetflixHorrorKr(the_movie_db_ids: string[]) {
     return data
 }
 
-export async function findNetflixHorrorKrById(id: string) : Promise<NetflixHorrorKrById> {
+export async function findNetflixHorrorKrById(id: string): Promise<NetflixHorrorKrById> {
     // 아이디로 넷플릭스 공포 영화를 찾는다이
     const { data, error } = await supabase
         .from('netflix_horror_kr')
         .select('title, poster_path, id, overview')
         .eq('pk', id)
-    
+
     if (error || !data) {
         return {
             title: "Unknown",
