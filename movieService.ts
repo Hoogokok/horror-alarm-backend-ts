@@ -21,6 +21,7 @@ export async function getReleasedResponse(today: string = new Date().toISOString
     const theaterList = await findTheaters();
     // 상영관 정보를 포함한 영화 정보를 만든다.
     const movies: MovieResponse[] = makeMovieResponse(releasedMovies, theaters, theaterList);
+    // 상영관 정보가 있는 영화만 반환한다.
     return movies.filter((movie: MovieResponse) => movie.theaters.length > 0);
 }
 
@@ -35,8 +36,9 @@ export async function getUpcomingResponse(today: string = new Date().toISOString
     const theaterList = await findTheaters();
     // 상영관 정보를 포함한 영화 정보를 만든다.
     const movies: MovieResponse[] = makeMovieResponse(releasingMovies, theaters, theaterList);
-    return movies.filter((movie: MovieResponse) => movie.theaters.length > 0);
+    return movies;
 }
+
 function makeMovieResponse(releasingMovies: any[], theaters: any[], theaterList: any[]): MovieResponse[] {
     const movies: MovieResponse[] = releasingMovies.map((movie: any) => {
         const movieTheaters = theaters.filter((theater: any) => theater.movie_id === movie.id);
