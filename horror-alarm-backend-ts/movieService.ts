@@ -44,7 +44,7 @@ export async function getReleasedResponse(today: string = new Date().toISOString
 
 export async function getUpcomingResponse(today: string = new Date().toISOString()) {
     // 오늘 이후 개봉하는 영화를 찾는다.
-    const releasingMovies = await findByReleaseDateBefore(today);
+    const releasingMovies = await findByReleaseDateAfter(today);
     // 개봉하는 영화의 id를 가져온다.
     const releasingMoviesIds = (releasingMovies ?? []).map((movie: Movie) => movie.id);
     // 개봉하는 영화의 상영관 정보를 가져온다.
