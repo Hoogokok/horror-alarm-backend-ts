@@ -1,4 +1,4 @@
-import { findByReleaseDateBefore, findMovieTheaters, findTheaters } from "./movieRepository.ts";
+import { findByReleaseDateBefore, findMovieTheaters, findTheaters, findByReleaseDateAfter } from "./movieRepository.ts";
 
 interface Movie {
     id: string;
