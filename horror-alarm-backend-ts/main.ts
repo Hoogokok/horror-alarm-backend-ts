@@ -5,6 +5,14 @@ import { cors } from 'hono/cors'
 
 const app = new Hono()
 
+app.use(cors({
+  origin: ['http://localhost:3000', Deno.env.get('FRONTEND_URL')],
+  methods: ['GET'],
+  headers: ['Content-Type', 'Authorization', 'X-Requested-With', "X-Custom-Header"],
+  credentials: true,
+  maxAge: 86400,
+}))
+
 app.get('/api/releasing', async (c) => {
   return c.json(await getReleasedResponse())
 })
@@ -21,5 +29,6 @@ app.get('/api/streaming/expired/detail/:id', async (c) => {
   const id = c.req.param('id')
   return c.json(await getNetflixDetailResponse(id))
 })
+
 
 Deno.serve(app.fetch)
