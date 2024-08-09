@@ -14,12 +14,18 @@ const supabase = createClient(
   supabaseKey
 )
 
-export async function findByReleaseDateAfter(today: string) {
+export async function findByReleaseDateAfter(today: string): Promise<Array<Movie>> {
   //날짜가 오늘 이후인 영화를 찾는다.
   const { data, error } = await supabase
     .from('upcoming_movie')
     .select('title, release_date, poster_path, overview, id')
     .gt('release_date', today)
+
+  if (error || !data) {
+    console.error(error.message)
+    return []
+  }
+
   return data
 }
 
