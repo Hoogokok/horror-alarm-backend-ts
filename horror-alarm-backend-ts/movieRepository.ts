@@ -21,12 +21,7 @@ export async function findByReleaseDateAfter(today: string): Promise<Array<Movie
     .select('title, release_date, poster_path, overview, id')
     .gt('release_date', today)
 
-  if (error || !data) {
-    console.error(error.message)
-    return []
-  }
-
-  return data
+  return handleError(error, data)
 }
 
 export async function findByReleaseDateBefore(today: string): Promise<Array<Movie>> {
@@ -36,26 +31,16 @@ export async function findByReleaseDateBefore(today: string): Promise<Array<Movi
     .select('title, release_date, poster_path, overview, id')
     .lte('release_date', today)
 
-  if (error || !data) {
-    console.error(error.message)
-    return []
-  }
-
-  return data
+  return handleError(error, data)
 }
 
-export async function findMovieTheaters(ids: string[]): Promise<Array<MovieTheater> {
+export async function findMovieTheaters(ids: string[]): Promise<Array<MovieTheater>> {
   const { data, error } = await supabase
     .from('movie_theaters')
     .select('theaters_id, movie_id')
     .in('movie_id', ids)
 
-  if (error || !data) {
-    console.error(error.message)
-    return []
-  }
-
-  return data
+  return handleError(error, data)
 }
 
 export async function findTheaters(): Promise<Array<Movie>> {
@@ -63,10 +48,14 @@ export async function findTheaters(): Promise<Array<Movie>> {
     .from('theaters')
     .select('*')
 
-  if (error || !data) {
-    console.error(error.message)
-    return []
-  }
-
-  return data
+  return handleError(error, data)
 }
+
+function handleError(error: PostgrestError | null, data: any): Array<any> {
+  if (error || !data) {
+    console.error(error?.message);
+    return [];
+  }
+  return data;
+}
+
