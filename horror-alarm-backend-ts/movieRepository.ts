@@ -1,5 +1,6 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import "jsr:@std/dotenv/load";
+import { Movie } from './movieEntityTypes.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
@@ -22,27 +23,33 @@ export async function findByReleaseDateAfter(today: string) {
   return data
 }
 
-export async function findByReleaseDateBefore(today: string) {
-  //날짜가 오늘 이전인 영화를 찾는다.
-  const { data, error } = await supabase
-    .from('upcoming_movie')
-    .select('title, release_date, poster_path, overview, id')
-    .lte('release_date', today)
+export async function findByReleaseDateBefore(today: string): Promise<Movie[]> {
+  {
+    //날짜가 오늘 이전인 영화를 찾는다.
+    const { data, error } = await supabase
+      .from('upcoming_movie')
+      .select('title, release_date, poster_path, overview, id')
+      .lte('release_date', today)
 
-  return data
-}
+    if (error || !data) {
+      console.error(error.message)
+      return []
+    }
 
-export async function findMovieTheaters(ids: string[]) {
-  const { data, error } = await supabase
-    .from('movie_theaters')
-    .select('theaters_id, movie_id')
-    .in('movie_id', ids)
-  return data
-}
+    return data
+  }
 
-export async function findTheaters() {
-  const { data, error } = await supabase
-    .from('theaters')
-    .select('*')
-  return data
-}
+  export async function findMovieTheaters(ids: string[]) {
+    const { data, error } = await supabase
+      .from('movie_theaters')
+      .select('theaters_id, movie_id')
+      .in('movie_id', ids)
+    return data
+  }
+
+  export async function findTheaters() {
+    const { data, error } = await supabase
+      .from('theaters')
+      .select('*')
+    return data
+  }
