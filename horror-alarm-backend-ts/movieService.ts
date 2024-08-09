@@ -1,22 +1,5 @@
 import { findByReleaseDateBefore, findMovieTheaters, findTheaters, findByReleaseDateAfter } from "./movieRepository.ts";
-
-interface Movie {
-    id: string;
-    title: string;
-    release_date: string;
-    poster_path: string;
-    overview: string;
-}
-
-interface Theater {
-    id: string;
-    name: string;
-}
-
-interface MovieTheater {
-    theaters_id: string;
-    movie_id: string;
-}
+import { Movie, MovieTheater, Theater } from "./movieEntityTypes.ts";
 
 interface MovieResponse {
     id: string;
