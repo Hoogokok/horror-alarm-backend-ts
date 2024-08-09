@@ -12,9 +12,9 @@ interface MovieResponse {
 
 export async function getReleasedResponse(today: string = new Date().toISOString()) {
     // 오늘 이전 개봉한 영화를 찾는다.
-    const releasedMovies = await findByReleaseDateBefore(today);
+    const releasedMovies = (await findByReleaseDateBefore(today)) ?? [];
     // 개봉한 영화의 id를 가져온다.
-    const releasedMoviesIds = (releasedMovies ?? []).map((movie: Movie) => movie.id);
+    const releasedMoviesIds = releasedMovies.map((movie: Movie) => movie.id);
     // 개봉한 영화의 상영관 정보를 가져온다.
     const theaters = await findMovieTheaters(releasedMoviesIds) ?? [];
     // 상영관 정보를 가져온다.
