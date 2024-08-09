@@ -23,7 +23,7 @@ export async function findByReleaseDateAfter(today: string) {
   return data
 }
 
-export async function findByReleaseDateBefore(today: string): Promise<Movie[]> {
+export async function findByReleaseDateBefore(today: string): Promise<Array<Movie>> {
   //날짜가 오늘 이전인 영화를 찾는다.
   const { data, error } = await supabase
     .from('upcoming_movie')
@@ -38,7 +38,7 @@ export async function findByReleaseDateBefore(today: string): Promise<Movie[]> {
   return data
 }
 
-export async function findMovieTheaters(ids: string[]) : Promise<Array<MovieTheater> {
+export async function findMovieTheaters(ids: string[]): Promise<Array<MovieTheater> {
   const { data, error } = await supabase
     .from('movie_theaters')
     .select('theaters_id, movie_id')
@@ -52,7 +52,7 @@ export async function findMovieTheaters(ids: string[]) : Promise<Array<MovieThea
   return data
 }
 
-export async function findTheaters(): Promise<Theater[]> {
+export async function findTheaters(): Promise<Array<Movie>> {
   const { data, error } = await supabase
     .from('theaters')
     .select('*')
