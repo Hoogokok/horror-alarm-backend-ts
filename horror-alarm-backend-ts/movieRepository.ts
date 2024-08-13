@@ -43,7 +43,7 @@ export async function findMovieTheaters(ids: string[]): Promise<Array<MovieTheat
   return handleError(error, data)
 }
 
-export async function findTheaters(): Promise<Array<Movie>> {
+export async function findTheaters(): Promise<Array<Theater>> {
   const { data, error } = await supabase
     .from('theaters')
     .select('*')
