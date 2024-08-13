@@ -1,22 +1,5 @@
 import { findByReleaseDateBefore, findMovieTheaters, findTheaters, findByReleaseDateAfter } from "./movieRepository.ts";
-
-interface Movie {
-    id: string;
-    title: string;
-    release_date: string;
-    poster_path: string;
-    overview: string;
-}
-
-interface Theater {
-    id: string;
-    name: string;
-}
-
-interface MovieTheater {
-    theaters_id: string;
-    movie_id: string;
-}
+import { Movie, MovieTheater, Theater } from "./movieEntityTypes.ts";
 
 interface MovieResponse {
     id: string;
@@ -27,11 +10,14 @@ interface MovieResponse {
     theaters: string[];
 }
 
-export async function getReleasedResponse(today: string = new Date().toISOString()) {
+export async function getReleasedResponse(today: string = new Date().toISOString()): Promise<Array<MovieResponse>> {
     // 오늘 이전 개봉한 영화를 찾는다.
-    const releasedMovies = await findByReleaseDateBefore(today);
+    const releasedMovies = await findByReleaseDateBefore(today)
+    if (!releasedMovies) {
+        return [];
+    }
     // 개봉한 영화의 id를 가져온다.
-    const releasedMoviesIds = (releasedMovies ?? []).map((movie: Movie) => movie.id);
+    const releasedMoviesIds = releasedMovies.map((movie: Movie) => movie.id);
     // 개봉한 영화의 상영관 정보를 가져온다.
     const theaters = await findMovieTheaters(releasedMoviesIds) ?? [];
     // 상영관 정보를 가져온다.
@@ -44,15 +30,15 @@ export async function getReleasedResponse(today: string = new Date().toISOString
 
 export async function getUpcomingResponse(today: string = new Date().toISOString()) {
     // 오늘 이후 개봉하는 영화를 찾는다.
-    const releasingMovies = await findByReleaseDateAfter(today);
+    const releasingMovies = (await findByReleaseDateAfter(today)) ?? [];
     // 개봉하는 영화의 id를 가져온다.
-    const releasingMoviesIds = (releasingMovies ?? []).map((movie: Movie) => movie.id);
+    const releasingMoviesIds = releasingMovies.map((movie: Movie) => movie.id);
     // 개봉하는 영화의 상영관 정보를 가져온다.
-    const theaters = await (findMovieTheaters(releasingMoviesIds) ?? []);
+    const theaters = (await findMovieTheaters(releasingMoviesIds)) ?? [];
     // 상영관 정보를 가져온다.
-    const theaterList = await (findTheaters() ?? []);
+    const theaterList = (await findTheaters()) ?? [];
     // 상영관 정보를 포함한 영화 정보를 만든다.
-    const movies: MovieResponse[] = makeMovieResponse(releasingMovies ?? [], theaters ?? [], theaterList ?? []);
+    const movies: MovieResponse[] = makeMovieResponse(releasingMovies, theaters, theaterList);
 
     return movies;
 }

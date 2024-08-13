@@ -22,7 +22,7 @@ export interface NetflixHorrorKrById {
 
 
 export interface NetflixResponses {
-    expiredMovies: NetflixResponse[];
+    expiredMovies: Array<NetflixResponse>;
 }
 
 interface NetflixResponse {
