@@ -10,7 +10,7 @@ interface MovieResponse {
     theaters: string[];
 }
 
-export async function getReleasedResponse(today: string = new Date().toISOString()) {
+export async function getReleasedResponse(today: string = new Date().toISOString()): Promise<Array<MovieResponse>> {
     // 오늘 이전 개봉한 영화를 찾는다.
     const releasedMovies = await findByReleaseDateBefore(today)
     if (!releasedMovies) {
