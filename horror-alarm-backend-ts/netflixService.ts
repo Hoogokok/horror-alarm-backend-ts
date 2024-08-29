@@ -1,4 +1,4 @@
-import { findByExpiredDateAfter, findNetflixHorrorKr, findNetflixHorrorKrById, findNetflixHorrorKrPage } from "./netflixRepository.ts";
+import { findByExpiredDateAfter, findNetflixHorrorKr, findNetflixHorrorKrById, findStremingHorrorPage } from "./netflixRepository.ts";
 
 interface ExpiredMovie {
     title: string;
@@ -38,8 +38,8 @@ interface NetflixDetailResponse {
 
 }
 
-export async function getNetflixMoives() {
-    const netflixHorrorKr = await findNetflixHorrorKrPage();
+export async function getNetflixMoives(the_provider_id: string = "1"): Promise<NetflixHorrorKr[]> {
+    const netflixHorrorKr = await findStremingHorrorPage(the_provider_id);
     return netflixHorrorKr;
 }
 
