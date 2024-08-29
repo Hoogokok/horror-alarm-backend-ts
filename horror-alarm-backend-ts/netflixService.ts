@@ -1,4 +1,4 @@
-import { findByExpiredDateAfter, findNetflixHorrorKr, findNetflixHorrorKrById } from "./netflixRepository.ts";
+import { findByExpiredDateAfter, findNetflixHorrorKr, findNetflixHorrorKrById, findNetflixHorrorKrPage } from "./netflixRepository.ts";
 
 interface ExpiredMovie {
     title: string;
@@ -10,7 +10,6 @@ export interface NetflixHorrorKr {
     title: string;
     poster_path: string;
     id: string;
-    the_movie_db_id: string;
 }
 
 export interface NetflixHorrorKrById {
@@ -18,6 +17,8 @@ export interface NetflixHorrorKrById {
     poster_path: string;
     id: string;
     overview: string;
+    release_date: string;
+    providers: string[];
 }
 
 
@@ -36,8 +37,17 @@ interface NetflixDetailResponse {
     id: string;
     title: string;
     posterPath: string;
+    releaseDate: string;
     overview: string;
+    providers: string[];
+
 }
+
+export async function getNetflixMoives() {
+    const netflixHorrorKr = await findNetflixHorrorKrPage();
+    return netflixHorrorKr;
+}
+
 
 export async function getNetflixDetailResponse(id: string): Promise<NetflixDetailResponse> {
     const netflixHorrorKrById = await findNetflixHorrorKrById(id);
@@ -47,6 +57,8 @@ export async function getNetflixDetailResponse(id: string): Promise<NetflixDetai
             title: "Unknown",
             posterPath: "Unknown",
             overview: "Unknown",
+            releaseDate: "Unknown",
+            providers: [],
         };
     }
     return {
@@ -54,6 +66,8 @@ export async function getNetflixDetailResponse(id: string): Promise<NetflixDetai
         title: netflixHorrorKrById.title,
         posterPath: netflixHorrorKrById.poster_path,
         overview: netflixHorrorKrById.overview,
+        releaseDate: netflixHorrorKrById.release_date,
+        providers: netflixHorrorKrById.providers,
     };
 }
 
@@ -87,7 +101,7 @@ export async function getExpiringResponse(today: string = new Date().toISOString
 
 function makeNetflixResponse(expiringMovies: ExpiredMovie[], netflixHorrorKr: NetflixHorrorKr[]): NetflixResponse[] {
     return expiringMovies.map((movie: ExpiredMovie) => {
-        const netflixHorror = netflixHorrorKr.find((netflixHorror: NetflixHorrorKr) => netflixHorror.the_movie_db_id === movie.the_movie_db_id);
+        const netflixHorror = netflixHorrorKr.find((netflixHorror: NetflixHorrorKr) => netflixHorror.id === movie.the_movie_db_id);
         if (!netflixHorror) {
             return {
                 id: "Unknown",
