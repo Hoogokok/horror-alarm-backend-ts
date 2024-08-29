@@ -41,9 +41,9 @@ export async function getNetflixDetailResponse(id: string): Promise<StreamingDet
     return {
         id: netflixHorrorKrById.id,
         title: netflixHorrorKrById.title,
-        posterPath: netflixHorrorKrById.poster_path,
+        posterPath: netflixHorrorKrById.posterPath,
         overview: netflixHorrorKrById.overview,
-        releaseDate: netflixHorrorKrById.release_date,
+        releaseDate: netflixHorrorKrById.releaseDate,
         providers: netflixHorrorKrById.providers,
     };
 }
