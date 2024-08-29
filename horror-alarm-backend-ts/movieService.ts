@@ -1,5 +1,5 @@
-import { findByReleaseDateBefore, findMovieTheaters, findTheaters, findByReleaseDateAfter } from "./movieRepository.ts";
 import { Movie, MovieTheater, Theater } from "./movieEntityTypes.ts";
+import { findByReleaseDateAfter, findByReleaseDateBefore, findMovieDetail, findMovieTheaters, findTheaters } from "./movieRepository.ts";
 
 interface MovieResponse {
     id: string;
@@ -7,7 +7,7 @@ interface MovieResponse {
     releaseDate: string;
     posterPath: string;
     overview: string;
-    theaters: string[];
+    providers: string[];
 }
 
 export async function getReleasedResponse(today: string = new Date().toISOString()): Promise<Array<MovieResponse>> {
@@ -25,7 +25,7 @@ export async function getReleasedResponse(today: string = new Date().toISOString
     // 상영관 정보를 포함한 영화 정보를 만든다.
     const movies: MovieResponse[] = makeMovieResponse(releasedMovies ?? [], theaters, theaterList);
     // 상영관 정보가 있는 영화만 반환한다.
-    return movies.filter((movie: MovieResponse) => movie.theaters.length > 0);
+    return movies.filter((movie: MovieResponse) => movie.providers.length > 0);
 }
 
 export async function getUpcomingResponse(today: string = new Date().toISOString()) {
@@ -41,6 +41,14 @@ export async function getUpcomingResponse(today: string = new Date().toISOString
     const movies: MovieResponse[] = makeMovieResponse(releasingMovies, theaters, theaterList);
 
     return movies;
+}
+
+export async function getMovieDetailResponse(movieId: string): Promise<MovieResponse> {
+    const movie = await findMovieDetail(movieId);
+    const movieTheaters = await findMovieTheaters([movieId]);
+    const theaters = await findTheaters();
+    const result = makeMovieResponse([movie], movieTheaters, theaters)[0];
+    return result;
 }
 
 function makeMovieResponse(releasingMovies: Movie[], movieTheaterList: MovieTheater[], theaterList: Theater[]): MovieResponse[] {
@@ -60,7 +68,7 @@ function makeMovieResponse(releasingMovies: Movie[], movieTheaterList: MovieThea
             releaseDate: movie.release_date,
             posterPath: movie.poster_path,
             overview: movie.overview,
-            theaters: notBlankTheaters
+            providers: notBlankTheaters
         };
     });
 
