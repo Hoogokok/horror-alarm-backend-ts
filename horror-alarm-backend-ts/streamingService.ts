@@ -1,4 +1,4 @@
-import { StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseType.ts";
+import { StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseTypes.ts";
 import { findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage} from "./streamingRepository.ts";
 
 interface ExpiredMovie {

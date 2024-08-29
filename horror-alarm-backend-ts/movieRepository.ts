@@ -1,6 +1,6 @@
 import { createClient, PostgrestError } from 'jsr:@supabase/supabase-js@2'
 import "jsr:@std/dotenv/load";
-import { Movie, Theater, MovieTheater } from './movieEntityTypes.ts';
+import { Movie, Theater, MovieTheater } from './movieDatabaseTypes.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');

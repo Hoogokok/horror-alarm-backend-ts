@@ -1,4 +1,4 @@
-import { Movie, MovieTheater, Theater } from "./movieEntityTypes.ts";
+import { Movie, MovieTheater, Theater } from "./movieDatabaseTypes.ts";
 import { findByReleaseDateAfter, findByReleaseDateBefore, findMovieDetail, findMovieTheaters, findTheaters } from "./movieRepository.ts";
 
 interface MovieResponse {
