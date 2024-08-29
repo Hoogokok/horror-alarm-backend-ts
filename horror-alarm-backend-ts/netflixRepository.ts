@@ -75,9 +75,9 @@ export async function findNetflixHorrorKrById(id: string): Promise<NetflixHorror
     }
 }
 
-export async function findNetflixHorrorKrPage(): Promise<NetflixHorrorKr[]> {
+export async function findStremingHorrorPage(the_provider_id: string): Promise<NetflixHorrorKr[]> {
     // 넷플릭스 공포 영화를 11개까지 찾는다.
-    const ids = await getMovieProviders()
+    const ids = await getMovieProviders(the_provider_id)
 
     const { data, error } = await supabase
         .from('movie')
@@ -99,11 +99,11 @@ export async function findNetflixHorrorKrPage(): Promise<NetflixHorrorKr[]> {
     })
 }
 
-async function getMovieProviders() {
+async function getMovieProviders(the_provider_id: string): Promise<Array<string>> {
     const { data, error } = await supabase
         .from('movie_providers')
         .select('movie_id')
-        .eq('the_provider_id', 1)
+        .eq('the_provider_id', the_provider_id)
 
     if (error || !data) {
         return []
