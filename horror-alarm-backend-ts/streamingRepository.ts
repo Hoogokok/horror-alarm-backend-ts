@@ -1,12 +1,21 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import "jsr:@std/dotenv/load";
-import { NetflixHorrorKrById, NetflixHorrorKr } from "./streamingService.ts";
+import {NetflixHorrorKr } from "./streamingService.ts";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
 
 if (!supabaseUrl || !supabaseKey) {
     throw new Error('SUPABASE_URL, SUPABASE_ANON_KEY 가 설정되지 않았습니다.');
+}
+export interface StreamingDetailResponse {
+    id: string;
+    title: string;
+    posterPath: string;
+    releaseDate: string;
+    overview: string;
+    providers: string[];
+
 }
 
 const supabase = createClient(
@@ -42,7 +51,7 @@ export async function findStreamingHorror(the_movie_db_ids: string[]): Promise<N
     return data
 }
 
-export async function findStreamingHorrorKrById(id: string): Promise<NetflixHorrorKrById> {
+export async function findStreamingHorrorKrById(id: string): Promise<StreamingDetailResponse> {
     // 아이디로 공포 영화를 찾는다
     const { data, error } = await supabase
         .from('movie')
@@ -53,10 +62,10 @@ export async function findStreamingHorrorKrById(id: string): Promise<NetflixHorr
     if (error || !data) {
         return {
             title: "Unknown",
-            poster_path: "Unknown",
+            posterPath: "Unknown",
             id: "Unknown",
             overview: "Unknown",
-            release_date: "Unknown",
+            releaseDate: "Unknown",
             providers: []
         }
     }
@@ -67,10 +76,10 @@ export async function findStreamingHorrorKrById(id: string): Promise<NetflixHorr
 
     return {
         title: data[0].title,
-        poster_path: data[0].poster_path,
+        posterPath: data[0].poster_path,
         id: data[0].id,
         overview: data[0].overview,
-        release_date: data[0].release_date,
+        releaseDate: data[0].release_date,
         providers: providers
     }
 }
