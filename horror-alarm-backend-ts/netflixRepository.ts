@@ -14,6 +14,12 @@ const supabase = createClient(
     supabaseKey
 )
 
+interface Provider {
+    the_provider_id: number;
+    movie_id?: string;
+}
+
+
 export async function findByExpiredDateAfter(today: string = new Date().toISOString()) {
     //날짜가 오늘 이후인 영화를 찾는다.
     const { data, error } = await supabase
@@ -26,10 +32,10 @@ export async function findByExpiredDateAfter(today: string = new Date().toISOStr
 export async function findNetflixHorrorKr(the_movie_db_ids: string[]): Promise<NetflixHorrorKr[]> {
     // the_movie_db_id가 있는 넷플릭스 공포 영화를 찾는다.
     const { data, error } = await supabase
-        .from('netflix_horror_kr')
-        .select('title, poster_path, id, the_movie_db_id')
-        .in('the_movie_db_id', the_movie_db_ids)
-    
+        .from('movie')
+        .select('title, poster_path, id')
+        .in('id', the_movie_db_ids)
+
     if (error || !data) {
         return []
     }
@@ -40,18 +46,73 @@ export async function findNetflixHorrorKr(the_movie_db_ids: string[]): Promise<N
 export async function findNetflixHorrorKrById(id: string): Promise<NetflixHorrorKrById> {
     // 아이디로 넷플릭스 공포 영화를 찾는다이
     const { data, error } = await supabase
-        .from('netflix_horror_kr')
-        .select('title, poster_path, id, overview')
-        .eq('pk', id)
+        .from('movie')
+        .select('title, poster_path, id, overview, release_date')
+        .eq('id', id)
 
+    const result = await getMovieProviderByMovieId(id)
     if (error || !data) {
         return {
             title: "Unknown",
             poster_path: "Unknown",
             id: "Unknown",
             overview: "Unknown",
+            release_date: "Unknown",
+            providers: []
         }
     }
 
-    return data[0]
+    const providers = result.map((provider: Provider) =>
+        provider.the_provider_id === 1 ? "넷플릭스" : "Disney+"
+    );
+
+    return {
+        title: data[0].title,
+        poster_path: data[0].poster_path,
+        id: data[0].id,
+        overview: data[0].overview,
+        release_date: data[0].release_date,
+        providers: providers
+    }
+}
+
+export async function findNetflixHorrorKrPage(): Promise<NetflixHorrorKr[]> {
+    // 넷플릭스 공포 영화를 11개까지 찾는다.
+    const ids = await getMovieProviders()
+
+    const { data, error } = await supabase
+        .from('movie')
+        .select('title, poster_path, id, overview')
+        .in('id', ids)
+        .range(0, 10)
+
+    if (error || !data) {
+        return []
+    }
+
+    return data
+}
+
+async function getMovieProviders() {
+    const { data, error } = await supabase
+        .from('movie_providers')
+        .select('movie_id')
+        .eq('the_provider_id', 1)
+
+    if (error || !data) {
+        return []
+    }
+    return data.map((movie: any) => movie.movie_id)
+}
+
+async function getMovieProviderByMovieId(movieId: string): Promise<Array<Provider>> {
+    const { data, error } = await supabase
+        .from('movie_providers')
+        .select('the_provider_id')
+        .eq('movie_id', movieId)
+
+    if (error || !data) {
+        return []
+    }
+    return data
 }
