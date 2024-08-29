@@ -10,6 +10,7 @@ export interface NetflixHorrorKr {
     title: string;
     poster_path: string;
     id: string;
+    the_movie_db_id: string;
 }
 
 export interface NetflixHorrorKrById {
@@ -20,12 +21,6 @@ export interface NetflixHorrorKrById {
     release_date: string;
     providers: string[];
 }
-
-
-export interface NetflixResponses {
-    expiredMovies: Array<NetflixResponse>;
-}
-
 interface NetflixResponse {
     id: string;
     title: string;
@@ -72,36 +67,30 @@ export async function getNetflixDetailResponse(id: string): Promise<NetflixDetai
 }
 
 
-export async function getExpiringResponse(today: string = new Date().toISOString()): Promise<NetflixResponses> {
+export async function getExpiringResponse(today: string = new Date().toISOString()): Promise<Array<NetflixResponse>> {
     // 오늘 이후 만료되는 넷플릭스 영화를 찾는다.
     const expiringMovies = await findByExpiredDateAfter(today);
     // 만료되는 영화가 없으면 빈 배열을 반환한다.
     if (!expiringMovies) {
-        return {
-            expiredMovies: [],
-        };
+        return [];
     }
     // 만료되는 영화의 the_movie_db_id를 가져온다.
     const expiringMoviesIds = expiringMovies.map((movie: ExpiredMovie) => movie.the_movie_db_id);
     // 만료되는 영화의 한국어 정보를 가져온다.
     const netflixHorrorKr = await findNetflixHorrorKr(expiringMoviesIds);
     if (!netflixHorrorKr) {
-        return {
-            expiredMovies: [],
-        };
+        return [];
     }
     // 만료되는 영화의 정보를 만든다.
     const movies: NetflixResponse[] = makeNetflixResponse(expiringMovies, netflixHorrorKr);
     // 정보가 있는 영화만 반환한다.
     const validMovies = movies.filter((movie: NetflixResponse) => movie.id !== "Unknown");
-    return {
-        expiredMovies: validMovies,
-    };
+    return validMovies;
 }
 
 function makeNetflixResponse(expiringMovies: ExpiredMovie[], netflixHorrorKr: NetflixHorrorKr[]): NetflixResponse[] {
     return expiringMovies.map((movie: ExpiredMovie) => {
-        const netflixHorror = netflixHorrorKr.find((netflixHorror: NetflixHorrorKr) => netflixHorror.id === movie.the_movie_db_id);
+        const netflixHorror = netflixHorrorKr.find((netflixHorror: NetflixHorrorKr) => netflixHorror.the_movie_db_id === movie.the_movie_db_id);
         if (!netflixHorror) {
             return {
                 id: "Unknown",
