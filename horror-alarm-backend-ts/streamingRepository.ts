@@ -1,21 +1,12 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import "jsr:@std/dotenv/load";
-import { StreamingHorrorExpiring, StreamingPageResponse } from "./streamingService.ts";
+import { StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseType.ts";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
 
 if (!supabaseUrl || !supabaseKey) {
     throw new Error('SUPABASE_URL, SUPABASE_ANON_KEY 가 설정되지 않았습니다.');
-}
-export interface StreamingDetailResponse {
-    id: string;
-    title: string;
-    posterPath: string;
-    releaseDate: string;
-    overview: string;
-    providers: string[];
-
 }
 
 const supabase = createClient(
@@ -85,7 +76,7 @@ export async function findStreamingHorrorKrById(id: string): Promise<StreamingDe
 }
 
 export async function findStremingHorrorPage(the_provider_id: string): Promise<StreamingPageResponse[]> {
-    // 넷플릭스 공포 영화를 11개까지 찾는다.
+    // 스트리밍 공포 영화를 11개까지 찾는다.
     const ids = await getMovieProviders(the_provider_id)
 
     const { data, error } = await supabase

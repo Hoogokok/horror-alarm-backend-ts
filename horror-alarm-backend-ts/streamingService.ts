@@ -1,22 +1,10 @@
-import { findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage, StreamingDetailResponse } from "./streamingRepository.ts";
+import { StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseType.ts";
+import { findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage} from "./streamingRepository.ts";
 
 interface ExpiredMovie {
     title: string;
     expired_date: string;
     the_movie_db_id: string;
-}
-
-export interface StreamingHorrorExpiring {
-    title: string;
-    poster_path: string;
-    id: string;
-    the_movie_db_id: string;
-}
-
-export interface StreamingPageResponse {
-    title: string;
-    posterPath: string;
-    id: string;
 }
 
 interface NetflixExpiredResponse {
