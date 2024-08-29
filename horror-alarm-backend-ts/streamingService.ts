@@ -1,4 +1,4 @@
-import { findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage } from "./netflixRepository.ts";
+import { findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage } from "./streamingRepository.ts";
 
 interface ExpiredMovie {
     title: string;

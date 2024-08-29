@@ -1,6 +1,6 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import "jsr:@std/dotenv/load";
-import { NetflixHorrorKrById, NetflixHorrorKr } from "./netflixService.ts";
+import { NetflixHorrorKrById, NetflixHorrorKr } from "./streamingService.ts";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
@@ -43,7 +43,7 @@ export async function findStreamingHorror(the_movie_db_ids: string[]): Promise<N
 }
 
 export async function findStreamingHorrorKrById(id: string): Promise<NetflixHorrorKrById> {
-    // 아이디로 넷플릭스 공포 영화를 찾는다이
+    // 아이디로 공포 영화를 찾는다
     const { data, error } = await supabase
         .from('movie')
         .select('title, poster_path, id, overview, release_date')

@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
 import { getReleasedResponse, getUpcomingResponse, getMovieDetailResponse } from './movieService.ts'
-import { getExpiringResponse, getNetflixDetailResponse, getStreamingMoives } from './netflixService.ts'
+import { getExpiringResponse, getNetflixDetailResponse, getStreamingMoives } from './streamingService.ts'
 import { cors } from 'hono/cors'
 
 const app = new Hono()
