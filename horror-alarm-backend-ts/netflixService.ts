@@ -38,9 +38,9 @@ interface NetflixDetailResponse {
 
 }
 
-export async function getNetflixMoives(the_provider_id: string = "1"): Promise<NetflixHorrorKr[]> {
-    const netflixHorrorKr = await findStremingHorrorPage(the_provider_id);
-    return netflixHorrorKr;
+export async function getStreamingMoives(the_provider_id: string = "1"): Promise<NetflixHorrorKr[]> {
+    const streamingHorrorKr = await findStremingHorrorPage(the_provider_id);
+    return streamingHorrorKr;
 }
 
 
