@@ -51,6 +51,15 @@ export async function findTheaters(): Promise<Array<Theater>> {
   return handleError(error, data)
 }
 
+export  async function findMovieDetail(id: string): Promise<Movie> { 
+  const { data, error } = await supabase
+    .from('upcoming_movie')
+    .select('title, release_date, poster_path, overview, id')
+    .eq('id', id)
+
+  return handleError(error, data)[0]
+}
+
 function handleError(error: PostgrestError | null, data: any): Array<any> {
   if (error || !data) {
     console.error(error?.message);
