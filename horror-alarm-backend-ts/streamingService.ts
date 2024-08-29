@@ -6,11 +6,17 @@ interface ExpiredMovie {
     the_movie_db_id: string;
 }
 
-export interface NetflixHorrorKr {
+export interface StreamingHorrorExpiring {
     title: string;
     poster_path: string;
     id: string;
     the_movie_db_id: string;
+}
+
+export interface StreamingPageResponse {
+    title: string;
+    posterPath: string;
+    id: string;
 }
 
 interface NetflixExpiredResponse {
@@ -20,7 +26,7 @@ interface NetflixExpiredResponse {
     expiredDate: string;
 }
 
-export async function getStreamingMoives(the_provider_id: string = "1"): Promise<NetflixHorrorKr[]> {
+export async function getStreamingMoives(the_provider_id: string = "1"): Promise<StreamingPageResponse[]> {
     const streamingHorrorKr = await findStremingHorrorPage(the_provider_id);
     return streamingHorrorKr;
 }
@@ -70,9 +76,9 @@ export async function getExpiringResponse(today: string = new Date().toISOString
     return validMovies;
 }
 
-function makeNetflixResponse(expiringMovies: ExpiredMovie[], netflixHorrorKr: NetflixHorrorKr[]): NetflixExpiredResponse[] {
+function makeNetflixResponse(expiringMovies: ExpiredMovie[], netflixHorrorKr: StreamingHorrorExpiring[]): NetflixExpiredResponse[] {
     return expiringMovies.map((movie: ExpiredMovie) => {
-        const netflixHorror = netflixHorrorKr.find((netflixHorror: NetflixHorrorKr) => netflixHorror.the_movie_db_id === movie.the_movie_db_id);
+        const netflixHorror = netflixHorrorKr.find((netflixHorror: StreamingHorrorExpiring) => netflixHorror.the_movie_db_id === movie.the_movie_db_id);
         if (!netflixHorror) {
             return {
                 id: "Unknown",

@@ -1,6 +1,6 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import "jsr:@std/dotenv/load";
-import {NetflixHorrorKr } from "./streamingService.ts";
+import { StreamingHorrorExpiring, StreamingPageResponse } from "./streamingService.ts";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
@@ -38,7 +38,7 @@ export async function findByExpiredDateAfter(today: string = new Date().toISOStr
     return data
 }
 
-export async function findStreamingHorror(the_movie_db_ids: string[]): Promise<NetflixHorrorKr[]> {
+export async function findStreamingHorror(the_movie_db_ids: string[]): Promise<StreamingHorrorExpiring[]> {
     // the_movie_db_id가 있는 스트리밍 공포 영화를 찾는다.
     const { data, error } = await supabase
         .from('movie')
@@ -84,13 +84,13 @@ export async function findStreamingHorrorKrById(id: string): Promise<StreamingDe
     }
 }
 
-export async function findStremingHorrorPage(the_provider_id: string): Promise<NetflixHorrorKr[]> {
+export async function findStremingHorrorPage(the_provider_id: string): Promise<StreamingPageResponse[]> {
     // 넷플릭스 공포 영화를 11개까지 찾는다.
     const ids = await getMovieProviders(the_provider_id)
 
     const { data, error } = await supabase
         .from('movie')
-        .select('title, poster_path, id, overview')
+        .select('title, poster_path, id')
         .in('id', ids)
         .range(0, 10)
 
@@ -101,9 +101,8 @@ export async function findStremingHorrorPage(the_provider_id: string): Promise<N
     return data.map((movie: any) => {
         return {
             title: movie.title,
-            poster_path: movie.poster_path,
-            id: movie.id,
-            the_movie_db_id: movie.the_movie_db_id
+            posterPath: movie.poster_path,
+            id: movie.id
         }
     })
 }
