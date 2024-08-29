@@ -33,9 +33,8 @@ export async function findNetflixHorrorKr(the_movie_db_ids: string[]): Promise<N
     // the_movie_db_id가 있는 넷플릭스 공포 영화를 찾는다.
     const { data, error } = await supabase
         .from('movie')
-        .select('title, poster_path, id')
-        .in('id', the_movie_db_ids)
-
+        .select('title, poster_path, id, the_movie_db_id')
+        .in('the_movie_db_id', the_movie_db_ids)
     if (error || !data) {
         return []
     }
@@ -90,7 +89,14 @@ export async function findNetflixHorrorKrPage(): Promise<NetflixHorrorKr[]> {
         return []
     }
 
-    return data
+    return data.map((movie: any) => {
+        return {
+            title: movie.title,
+            poster_path: movie.poster_path,
+            id: movie.id,
+            the_movie_db_id: movie.the_movie_db_id
+        }
+    })
 }
 
 async function getMovieProviders() {
