@@ -1,6 +1,6 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
 import "jsr:@std/dotenv/load";
-import { StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseTypes.ts";
+import { Provider, StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseTypes.ts";
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL');
 const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
@@ -14,10 +14,6 @@ const supabase = createClient(
     supabaseKey
 )
 
-interface Provider {
-    the_provider_id: number;
-    movie_id?: string;
-}
 
 
 export async function findByExpiredDateAfter(today: string = new Date().toISOString()) {
