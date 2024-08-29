@@ -1,4 +1,4 @@
-import { findByExpiredDateAfter, findNetflixHorrorKr, findNetflixHorrorKrById, findStremingHorrorPage } from "./netflixRepository.ts";
+import { findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage } from "./netflixRepository.ts";
 
 interface ExpiredMovie {
     title: string;
@@ -45,7 +45,7 @@ export async function getStreamingMoives(the_provider_id: string = "1"): Promise
 
 
 export async function getNetflixDetailResponse(id: string): Promise<NetflixDetailResponse> {
-    const netflixHorrorKrById = await findNetflixHorrorKrById(id);
+    const netflixHorrorKrById = await findStreamingHorrorKrById(id);
     if (netflixHorrorKrById.id === "Unknown") {
         return {
             id: "Unknown",
@@ -77,7 +77,7 @@ export async function getExpiringResponse(today: string = new Date().toISOString
     // 만료되는 영화의 the_movie_db_id를 가져온다.
     const expiringMoviesIds = expiringMovies.map((movie: ExpiredMovie) => movie.the_movie_db_id);
     // 만료되는 영화의 한국어 정보를 가져온다.
-    const netflixHorrorKr = await findNetflixHorrorKr(expiringMoviesIds);
+    const netflixHorrorKr = await findStreamingHorror(expiringMoviesIds);
     if (!netflixHorrorKr) {
         return [];
     }

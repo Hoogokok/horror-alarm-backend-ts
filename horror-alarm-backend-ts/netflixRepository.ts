@@ -29,8 +29,8 @@ export async function findByExpiredDateAfter(today: string = new Date().toISOStr
     return data
 }
 
-export async function findNetflixHorrorKr(the_movie_db_ids: string[]): Promise<NetflixHorrorKr[]> {
-    // the_movie_db_id가 있는 넷플릭스 공포 영화를 찾는다.
+export async function findStreamingHorror(the_movie_db_ids: string[]): Promise<NetflixHorrorKr[]> {
+    // the_movie_db_id가 있는 스트리밍 공포 영화를 찾는다.
     const { data, error } = await supabase
         .from('movie')
         .select('title, poster_path, id, the_movie_db_id')
@@ -42,7 +42,7 @@ export async function findNetflixHorrorKr(the_movie_db_ids: string[]): Promise<N
     return data
 }
 
-export async function findNetflixHorrorKrById(id: string): Promise<NetflixHorrorKrById> {
+export async function findStreamingHorrorKrById(id: string): Promise<NetflixHorrorKrById> {
     // 아이디로 넷플릭스 공포 영화를 찾는다이
     const { data, error } = await supabase
         .from('movie')
