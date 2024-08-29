@@ -30,8 +30,9 @@ app.get('/api/streaming/expired/detail/:id', async (c) => {
   return c.json(await getNetflixDetailResponse(id))
 })
 
-app.get('/api/streaming/netflix', async (c) => {
-  return c.json(await getStreamingMoives())
+app.get('/api/streaming/:id', async (c) => {
+  const id = c.req.param('id')
+  return c.json(await getStreamingMoives(id))
 })
 
 app.get('/api/movie/:id', async (c) => {
