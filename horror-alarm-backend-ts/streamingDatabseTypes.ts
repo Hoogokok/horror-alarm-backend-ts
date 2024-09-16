@@ -4,6 +4,8 @@ export interface StreamingDetailResponse {
     posterPath: string;
     releaseDate: string;
     overview: string;
+    voteAverage: string;
+    voteCount: string;
     providers: string[];
 
 }
@@ -19,6 +21,7 @@ export interface StreamingPageResponse {
     title: string;
     posterPath: string;
     id: string;
+    the_provider_id?: number;
 }
 
 export interface Provider {
