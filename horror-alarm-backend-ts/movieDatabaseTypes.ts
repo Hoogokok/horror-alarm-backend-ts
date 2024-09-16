@@ -4,6 +4,8 @@ export interface Movie {
     release_date: string;
     poster_path: string;
     overview: string;
+    vote_average: string;
+    vote_count: string;
 }
 
 export interface Theater {
