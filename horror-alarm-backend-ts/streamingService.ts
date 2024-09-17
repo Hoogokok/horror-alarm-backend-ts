@@ -1,5 +1,5 @@
 import { StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseTypes.ts";
-import { findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage} from "./streamingRepository.ts";
+import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage } from "./streamingRepository.ts";
 
 interface ExpiredMovie {
     title: string;
@@ -14,11 +14,17 @@ interface NetflixExpiredResponse {
     expiredDate: string;
 }
 
-export async function getStreamingMoives(the_provider_id: string = "1"): Promise<StreamingPageResponse[]> {
-    const streamingHorrorKr = await findStremingHorrorPage(the_provider_id);
+export async function getStreamingMoives(query: string, page: string): Promise<StreamingPageResponse[]> {
+    const providerId = query === "netflix" ? 1 : query === "disney" ? 2 : 0;
+    const streamingHorrorKr = await filterStreamingHorror(providerId, parseInt(page));
     return streamingHorrorKr;
 }
 
+export async function getTotalPage(query: string): Promise<number> {
+    const providerId = query === "netflix" ? 1 : query === "disney" ? 2 : 0;
+    const totalPages = await countStreamingAllHorror(providerId);
+    return totalPages;
+}
 
 export async function getNetflixDetailResponse(id: string): Promise<StreamingDetailResponse> {
     const netflixHorrorKrById = await findStreamingHorrorKrById(id);
@@ -29,6 +35,8 @@ export async function getNetflixDetailResponse(id: string): Promise<StreamingDet
             posterPath: "Unknown",
             overview: "Unknown",
             releaseDate: "Unknown",
+            voteAverage: "Unknown",
+            voteCount: "Unknown",
             providers: [],
         };
     }
@@ -38,6 +46,8 @@ export async function getNetflixDetailResponse(id: string): Promise<StreamingDet
         posterPath: netflixHorrorKrById.posterPath,
         overview: netflixHorrorKrById.overview,
         releaseDate: netflixHorrorKrById.releaseDate,
+        voteAverage: netflixHorrorKrById.voteAverage,
+        voteCount: netflixHorrorKrById.voteCount,
         providers: netflixHorrorKrById.providers,
     };
 }
@@ -83,4 +93,3 @@ function makeNetflixResponse(expiringMovies: ExpiredMovie[], netflixHorrorKr: St
         }
     });
 }
-
