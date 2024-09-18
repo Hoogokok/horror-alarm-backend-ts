@@ -1,5 +1,5 @@
 import { StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseTypes.ts";
-import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage } from "./streamingRepository.ts";
+import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, findStreamingHorror, findStreamingHorrorKrById, initSupabase } from "./streamingRepository.ts";
 
 interface ExpiredMovie {
     title: string;
@@ -14,6 +14,7 @@ interface NetflixExpiredResponse {
     expiredDate: string;
 }
 
+initSupabase();
 
 export async function getStreamingMoives(query: string, page: string): Promise<StreamingPageResponse[]> {
     const providerId = query === "netflix" ? 1 : query === "disney" ? 2 : 0;
