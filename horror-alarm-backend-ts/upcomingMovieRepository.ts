@@ -54,10 +54,25 @@ export async function findTheaters(): Promise<Array<Theater>> {
 export  async function findMovieDetail(id: string): Promise<Movie> { 
   const { data, error } = await supabase
     .from('upcoming_movie')
-    .select('title, release_date, poster_path, overview, id, vote_average, vote_count')
+    .select('title, release_date, poster_path, overview, id, vote_average, vote_count, the_movie_db_id')
     .eq('id', id)
 
-  return handleError(error, data)[0]
+  const { data: reviews, error: reviewsError } = await supabase
+    .from('reviews')
+    .select('id, review_content')
+    .eq('review_movie_id', data[0].the_movie_db_id)
+
+  if (reviewsError || !reviews) {
+    return {
+      ...data[0],
+      reviews: []
+    }
+  }
+
+  return {
+    ...data[0],
+    reviews: reviews.map((review: any) => review.review_content)
+  }
 }
 
 function handleError(error: PostgrestError | null, data: any): Array<any> {
