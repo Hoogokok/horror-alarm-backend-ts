@@ -101,7 +101,7 @@ export async function findStreamingHorrorKrById(id: string): Promise<StreamingDe
     // 아이디로 공포 영화를 찾는다
     const { data, error } = await supabase
         .from('movie')
-        .select('title, poster_path, id, overview, release_date, vote_average, vote_count')
+        .select('title, poster_path, id, overview, release_date, vote_average, vote_count, the_movie_db_id')
         .eq('id', id)
 
     const result = await getMovieProviderByMovieId(id)
@@ -114,13 +114,35 @@ export async function findStreamingHorrorKrById(id: string): Promise<StreamingDe
             releaseDate: "Unknown",
             providers: [],
             voteAverage: "Unknown",
-            voteCount: "Unknown"
+            voteCount: "Unknown",
+            the_movie_db_id: "Unknown",
+            reviews: []
         }
     }
 
     const providers = result.map((provider: Provider) =>
         provider.the_provider_id === 1 ? "넷플릭스" : "Disney+"
-    );
+    )
+
+    const { data : reviews, error : reviewsError  } = await supabase
+        .from('reviews')
+        .select('id, review_content')
+        .eq('the_movie_db_id', data[0].the_movie_db_id)
+
+    if (reviewsError || !reviews) {
+        return {
+            title: data[0].title,
+            posterPath: data[0].poster_path,
+            id: data[0].id,
+            overview: data[0].overview,
+            releaseDate: data[0].release_date,
+            providers: providers,
+            voteAverage: data[0].vote_average,
+            voteCount: data[0].vote_count,
+            the_movie_db_id: data[0].the_movie_db_id,
+            reviews: []
+        }
+    }
 
     return {
         title: data[0].title,
@@ -130,7 +152,9 @@ export async function findStreamingHorrorKrById(id: string): Promise<StreamingDe
         releaseDate: data[0].release_date,
         providers: providers,
         voteAverage: data[0].vote_average,
-        voteCount: data[0].vote_count
+        voteCount: data[0].vote_count,
+        the_movie_db_id: data[0].the_movie_db_id,
+        reviews: reviews.map((review: any) => review.review_content)
     }
 }
 

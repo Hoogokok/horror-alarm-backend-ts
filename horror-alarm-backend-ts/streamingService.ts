@@ -14,6 +14,7 @@ interface NetflixExpiredResponse {
     expiredDate: string;
 }
 
+
 export async function getStreamingMoives(query: string, page: string): Promise<StreamingPageResponse[]> {
     const providerId = query === "netflix" ? 1 : query === "disney" ? 2 : 0;
     const streamingHorrorKr = await filterStreamingHorror(providerId, parseInt(page));
@@ -37,7 +38,9 @@ export async function getNetflixDetailResponse(id: string): Promise<StreamingDet
             releaseDate: "Unknown",
             voteAverage: "Unknown",
             voteCount: "Unknown",
+            the_movie_db_id: "Unknown",
             providers: [],
+            reviews: []
         };
     }
     return {
@@ -49,6 +52,8 @@ export async function getNetflixDetailResponse(id: string): Promise<StreamingDet
         voteAverage: netflixHorrorKrById.voteAverage,
         voteCount: netflixHorrorKrById.voteCount,
         providers: netflixHorrorKrById.providers,
+        the_movie_db_id: netflixHorrorKrById.the_movie_db_id,
+        reviews: netflixHorrorKrById.reviews
     };
 }
 
