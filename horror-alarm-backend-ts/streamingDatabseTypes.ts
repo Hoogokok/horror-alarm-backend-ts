@@ -7,7 +7,8 @@ export interface StreamingDetailResponse {
     voteAverage: string;
     voteCount: string;
     providers: string[];
-
+    the_movie_db_id: string;
+    reviews: string[];
 }
 
 export interface StreamingHorrorExpiring {
