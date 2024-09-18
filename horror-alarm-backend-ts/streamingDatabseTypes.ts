@@ -23,6 +23,8 @@ export interface StreamingPageResponse {
     posterPath: string;
     id: string;
     the_provider_id?: number;
+    releaseDate: string;
+    providers?: string;
 }
 
 export interface Provider {
