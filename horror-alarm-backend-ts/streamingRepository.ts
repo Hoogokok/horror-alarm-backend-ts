@@ -1,34 +1,42 @@
 import { createClient } from 'jsr:@supabase/supabase-js@2'
-import "jsr:@std/dotenv/load";
 import { Provider, StreamingDetailResponse, StreamingHorrorExpiring, StreamingPageResponse } from "./streamingDatabseTypes.ts";
 import { sql } from "./db.ts";
-const supabaseUrl = Deno.env.get('SUPABASE_URL');
-const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
+
 const itemPerPage = 6
-if (!supabaseUrl || !supabaseKey) {
-    throw new Error('SUPABASE_URL, SUPABASE_ANON_KEY 가 설정되지 않았습니다.');
-}
 
+let supabase: ReturnType<typeof createClient>;
 
-const supabase = createClient(
-    supabaseUrl,
-    supabaseKey
-)
+export function initSupabase() {
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
 
-
-export async function countStreamingAllHorror(providerId: number): Promise<number> {
-    // 스트리밍 공포 영화의 수를 찾는다.
-    if (providerId !== 0) {
-        const result = await sql`
-        SELECT COUNT(*) FROM movie_providers WHERE the_provider_id = ${providerId}`
-        const totalPages = Math.ceil(result[0].count / itemPerPage)
-        return totalPages
+    if (!supabaseUrl || !supabaseKey) {
+        throw new Error('SUPABASE_URL, SUPABASE_ANON_KEY 가 설정되지 않았습니다.');
     }
 
-    const result = await sql`
-        SELECT COUNT(*) FROM movie_providers`
-    const totalPages = Math.ceil(result[0].count / itemPerPage)
-    return totalPages
+    if (Deno.env.get('DENO_ENV') !== 'test') {
+        supabase = createClient(supabaseUrl, supabaseKey);
+    }
+}
+
+// 테스트용 함수 추가
+export function setTestSupabase(mockClient: any) {
+    if (Deno.env.get('DENO_ENV') === 'test') {
+        supabase = mockClient as ReturnType<typeof createClient>;
+    }
+}
+
+export async function countStreamingAllHorror(providerId: number): Promise<number> {
+    var result;
+    if (providerId !== 0) {
+        result = await sql`
+        SELECT COUNT(*) FROM movie_providers WHERE the_provider_id = ${providerId}`;
+    } else {
+        result = await sql`
+        SELECT COUNT(*) FROM movie_providers`;
+    }
+    const totalPages = Math.ceil(result[0].count / itemPerPage);
+    return totalPages;
 }
 
 export async function filterStreamingHorror(id: number, currentPage: number): Promise<Array<StreamingPageResponse>> {
@@ -94,7 +102,7 @@ export async function findStreamingHorror(the_movie_db_ids: string[]): Promise<S
         return []
     }
 
-    return data
+    return data  as StreamingHorrorExpiring[]
 }
 
 export async function findStreamingHorrorKrById(id: string): Promise<StreamingDetailResponse> {
@@ -127,35 +135,35 @@ export async function findStreamingHorrorKrById(id: string): Promise<StreamingDe
     const { data : reviews, error : reviewsError  } = await supabase
         .from('reviews')
         .select('id, review_content')
-        .eq('the_movie_db_id', data[0].the_movie_db_id)
+        .eq('the_movie_db_id', data[0].the_movie_db_id as string)
 
-    if (reviewsError || !reviews) {
-        return {
-            title: data[0].title,
-            posterPath: data[0].poster_path,
-            id: data[0].id,
-            overview: data[0].overview,
-            releaseDate: data[0].release_date,
-            providers: providers,
-            voteAverage: data[0].vote_average,
-            voteCount: data[0].vote_count,
-            the_movie_db_id: data[0].the_movie_db_id,
-            reviews: []
+        if (reviewsError || !reviews) {
+            return {
+                title: data[0].title as string,
+                posterPath: data[0].poster_path as string,
+                id: data[0].id as string,
+                overview: data[0].overview as string,
+                releaseDate: data[0].release_date as string,
+                providers: providers,
+                voteAverage: data[0].vote_average as string,
+                voteCount: data[0].vote_count as string,
+                the_movie_db_id: data[0].the_movie_db_id as string,
+                reviews: []
+            }
         }
-    }
 
-    return {
-        title: data[0].title,
-        posterPath: data[0].poster_path,
-        id: data[0].id,
-        overview: data[0].overview,
-        releaseDate: data[0].release_date,
-        providers: providers,
-        voteAverage: data[0].vote_average,
-        voteCount: data[0].vote_count,
-        the_movie_db_id: data[0].the_movie_db_id,
-        reviews: reviews.map((review: any) => review.review_content)
-    }
+        return {
+            title: data[0].title as string,
+            posterPath: data[0].poster_path as string,
+            id: data[0].id as string,
+            overview: data[0].overview as string,
+            releaseDate: data[0].release_date as string,
+            providers: providers,
+            voteAverage: data[0].vote_average as string,
+            voteCount: data[0].vote_count as string,
+            the_movie_db_id: data[0].the_movie_db_id as string,
+            reviews: reviews.map((review: any) => review.review_content as string)
+        }
 }
 
 export async function findStremingHorrorPage(the_provider_id: string, page: number): Promise<StreamingPageResponse[]> {
@@ -166,7 +174,7 @@ export async function findStremingHorrorPage(the_provider_id: string, page: numb
 
     const { data, error } = await supabase
         .from('movie')
-        .select('title, poster_path, id')
+        .select('title, poster_path, id, release_date')
         .in('id', ids)
         .range(start, end)
 
@@ -178,7 +186,8 @@ export async function findStremingHorrorPage(the_provider_id: string, page: numb
         return {
             title: movie.title,
             posterPath: movie.poster_path,
-            id: movie.id
+            id: movie.id,
+            releaseDate: movie.release_date
         }
     })
 }
@@ -195,7 +204,7 @@ async function getMovieProviders(the_provider_id: string): Promise<Array<string>
     return data.map((movie: any) => movie.movie_id)
 }
 
-async function getMovieProviderByMovieId(movieId: string): Promise<Array<Provider>> {
+async function getMovieProviderByMovieId(movieId: string): Promise<Provider[]> {
     const { data, error } = await supabase
         .from('movie_providers')
         .select('the_provider_id')
@@ -204,5 +213,5 @@ async function getMovieProviderByMovieId(movieId: string): Promise<Array<Provide
     if (error || !data) {
         return []
     }
-    return data
+    return data as Provider[];
 }
