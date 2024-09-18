@@ -8,6 +8,8 @@ interface MovieResponse {
     posterPath: string;
     overview: string;
     providers: string[];
+    the_movie_db_id: string;
+    reviews: string[];
 }
 
 export async function getReleasedResponse(today: string = new Date().toISOString()): Promise<Array<MovieResponse>> {
@@ -68,7 +70,9 @@ function makeMovieResponse(releasingMovies: Movie[], movieTheaterList: MovieThea
             releaseDate: movie.release_date,
             posterPath: movie.poster_path,
             overview: movie.overview,
-            providers: notBlankTheaters
+            providers: notBlankTheaters,
+            the_movie_db_id: movie.the_movie_db_id,
+            reviews: movie.reviews
         };
     });
 
