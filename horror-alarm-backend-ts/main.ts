@@ -1,5 +1,5 @@
 import { Hono } from 'hono'
-import { getReleasedResponse, getUpcomingResponse, getMovieDetailResponse } from './movieService.ts'
+import { getReleasedResponse, getUpcomingResponse, getMovieDetailResponse } from './upcomingMovieService.ts'
 import { getExpiringResponse, getNetflixDetailResponse, getStreamingMoives, getTotalPage } from './streamingService.ts'
 import { cors } from 'hono/cors'
 
