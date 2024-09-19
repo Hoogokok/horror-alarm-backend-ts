@@ -108,7 +108,16 @@ export async function findStreamingHorror(the_movie_db_ids: string[]): Promise<S
         return []
     }
 
-    return data  as StreamingHorrorExpiring[]
+    return data.map((movie: any) => {
+        return {
+            title: movie.title,
+            poster_path: movie.poster_path,
+            id: movie.id,
+            vote_average: movie.vote_average,
+            vote_count: movie.vote_count,
+            the_movie_db_id: movie.the_movie_db_id
+        }
+    })
 }
 
 export async function findStreamingHorrorKrById(id: string): Promise<StreamingDetailResponse> {
