@@ -4,8 +4,8 @@ import { findByReleaseDateAfter, findByReleaseDateBefore, findMovieDetail, findM
 interface MovieResponse {
     id: string;
     title: string;
-    releaseDate: string;
-    posterPath: string;
+    release_date: string;
+    poster_path: string;
     overview: string;
     providers: string[];
     the_movie_db_id: string;
@@ -67,8 +67,8 @@ function makeMovieResponse(releasingMovies: Movie[], movieTheaterList: MovieThea
         return {
             id: movie.id,
             title: movie.title,
-            releaseDate: movie.release_date,
-            posterPath: movie.poster_path,
+            release_date: movie.release_date,
+            poster_path: movie.poster_path,
             overview: movie.overview,
             providers: notBlankTheaters,
             the_movie_db_id: movie.the_movie_db_id,
