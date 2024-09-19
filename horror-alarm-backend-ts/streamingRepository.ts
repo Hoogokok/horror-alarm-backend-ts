@@ -83,12 +83,18 @@ export async function filterStreamingHorror(id: number, currentPage: number): Pr
 }
 
 
-export async function findByExpiredDateAfter(today: string = new Date().toISOString()) {
+export async function findByExpiredDateAfter(today: string = new Date().toISOString()){
     //날짜가 오늘 이후인 영화를 찾는다.
     const { data, error } = await supabase
         .from('netflix_horror_expiring')
         .select('title, expired_date, the_movie_db_id')
         .gte('expired_date', today)
+
+    if (error) {
+        console.error('Error in findByExpiredDateAfter:', error);
+        return [];
+    }
+    
     return data
 }
 
