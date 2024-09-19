@@ -1,7 +1,8 @@
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { assertSpyCalls, spy } from "https://deno.land/std/testing/mock.ts";
-import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, setTestSupabase } from "../streamingRepository.ts";
+import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, setTestSupabase, findStreamingHorror } from "../streamingRepository.ts";
 import { setMockSql, clearMockSql } from "../db.ts";
+import { mockSupabaseClient } from "./mocks/supabaseMock.ts";
 
 Deno.test("countStreamingAllHorror", async (t) => {
   const mockSql = spy((strings: TemplateStringsArray, ...values: any[]) => {
@@ -158,16 +159,53 @@ Deno.test("findByExpiredDateAfter", async (t) => {
   });
 });
 
-function mockSupabaseClient(mockData: any) {
-  return {
-    from: () => ({
-      select: () => ({
-        gte: (field: string, value: string) => ({
-          data: mockData.filter((item: any) => new Date(item[field]) >= new Date(value)),
-          error: null
+const mockMovies = [
+  { title: "공포영화1", poster_path: "/path1.jpg", id: "1", vote_average: 7.5, vote_count: 1000, the_movie_db_id: "tmdb1" },
+  { title: "공포영화2", poster_path: "/path2.jpg", id: "2", vote_average: 8.0, vote_count: 1500, the_movie_db_id: "tmdb2" },
+  { title: "공포영화3", poster_path: "/path3.jpg", id: "3", vote_average: 6.5, vote_count: 800, the_movie_db_id: "tmdb3" },
+];
+
+Deno.test("findStreamingHorror", async (t) => {
+  const mockClient = mockSupabaseClient(mockMovies);
+  setTestSupabase(mockClient);
+
+  await t.step("존재하는 영화 ID로 검색", async () => {
+    const result = await findStreamingHorror(["tmdb1", "tmdb2"]);
+
+    assertEquals(result, [
+      { title: "공포영화1", poster_path: "/path1.jpg", id: "1", vote_average: 7.5, vote_count: 1000, the_movie_db_id: "tmdb1" },
+      { title: "공포영화2", poster_path: "/path2.jpg", id: "2", vote_average: 8.0, vote_count: 1500, the_movie_db_id: "tmdb2" },
+    ]);
+  });
+
+  await t.step("존재하지 않는 영화 ID로 검색", async () => {
+    const result = await findStreamingHorror(["tmdb4"]);
+
+    assertEquals(result, []);
+  });
+
+  await t.step("빈 ID 목록으로 검색", async () => {
+    const result = await findStreamingHorror([]);
+
+    assertEquals(result, []);
+  });
+
+  await t.step("에러 발생 시 빈 배열 반환", async () => {
+    const errorClient = {
+      from: () => ({
+        select: () => ({
+          in: () => ({
+            data: null,
+            error: new Error("Database error")
+          })
         })
       })
-    })
-  };
-}
+    };
+    setTestSupabase(errorClient);
+
+    const result = await findStreamingHorror(["tmdb1"]);
+
+    assertEquals(result, []);
+  });
+});
 
