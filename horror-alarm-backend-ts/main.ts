@@ -1,6 +1,6 @@
 import { Hono } from 'hono'
-import { getReleasedResponse, getUpcomingResponse } from './movieService.ts'
-import { getExpiringResponse, getNetflixDetailResponse } from './netflixService.ts'
+import { getReleasedResponse, getUpcomingResponse, getMovieDetailResponse } from './upcomingMovieService.ts'
+import { getExpiringResponse, getNetflixDetailResponse, getStreamingMoives, getTotalPage } from './streamingService.ts'
 import { cors } from 'hono/cors'
 
 const app = new Hono()
@@ -28,6 +28,26 @@ app.get('/api/streaming/expired', async (c) => {
 app.get('/api/streaming/expired/detail/:id', async (c) => {
   const id = c.req.param('id')
   return c.json(await getNetflixDetailResponse(id))
+})
+
+app.get('/api/streaming', async (c) => {
+  const query = c.req.query('query')
+  return c.json(await getTotalPage(query))
+})
+
+app.get('/api/streaming/page', async (c) => {
+  const query = c.req.query('query')
+  const page = c.req.query('page')
+  return c.json(await getStreamingMoives(query, page))
+})
+
+app.get('/api/movie/:id', async (c) => {
+  const id = c.req.param('id')
+  const category = c.req.query('category')
+  if (category === 'streaming') {
+    return c.json(await getNetflixDetailResponse(id))
+  }
+  return c.json(await getMovieDetailResponse(id))
 })
 
 

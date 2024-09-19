@@ -4,6 +4,10 @@ export interface Movie {
     release_date: string;
     poster_path: string;
     overview: string;
+    vote_average: string;
+    vote_count: string;
+    the_movie_db_id: string;
+    reviews: string[];
 }
 
 export interface Theater {
