@@ -54,7 +54,7 @@ export async function filterStreamingHorror(id: number, currentPage: number): Pr
         return result.map((movie: any) => {
             return {
                 title: movie.title,
-                posterPath: movie.poster_path,
+                poster_path: movie.poster_path,
                 id: movie.movie_id,
                 release_date: movie.release_date,
                 providers: movie.the_provider_id === "1" ? "넷플릭스" : "디즈니플러스"
@@ -74,7 +74,7 @@ export async function filterStreamingHorror(id: number, currentPage: number): Pr
     return result.map((movie: any) => {
         return {
             title: movie.title,
-            posterPath: movie.poster_path,
+            poster_path: movie.poster_path,
             id: movie.movie_id,
             release_date: movie.release_date,
             providers: movie.the_provider_id === "1" ? "넷플릭스" : "디즈니플러스"
