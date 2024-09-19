@@ -1,11 +1,11 @@
 export interface StreamingDetailResponse {
     id: string;
     title: string;
-    posterPath: string;
-    releaseDate: string;
+    poster_path: string;
+    release_date: string;
     overview: string;
-    voteAverage: number;
-    voteCount: number;
+    vote_average: number;
+    vote_count: number;
     providers: string[];
     the_movie_db_id: string;
     reviews: string[];
@@ -22,10 +22,10 @@ export interface StreamingHorrorExpiring {
 
 export interface StreamingPageResponse {
     title: string;
-    posterPath: string;
+    poster_path: string;
     id: string;
     the_provider_id?: number;
-    releaseDate: string;
+    release_date: string;
     providers?: string;
 }
 
