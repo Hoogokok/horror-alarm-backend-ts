@@ -16,6 +16,8 @@ export interface StreamingHorrorExpiring {
     poster_path: string;
     id: string;
     the_movie_db_id: string;
+    vote_average: number;
+    vote_count: number;
 }
 
 export interface StreamingPageResponse {
