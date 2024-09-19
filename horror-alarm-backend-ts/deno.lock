@@ -689,8 +689,7 @@
   },
   "workspace": {
     "dependencies": [
-      "jsr:@hono/hono@^4.5.4",
-      "jsr:@neon/serverless@^0.9.5"
+      "jsr:@hono/hono@^4.5.4"
     ]
   }
 }
