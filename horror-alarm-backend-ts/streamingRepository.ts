@@ -56,7 +56,7 @@ export async function filterStreamingHorror(id: number, currentPage: number): Pr
                 title: movie.title,
                 posterPath: movie.poster_path,
                 id: movie.movie_id,
-                releaseDate: movie.release_date,
+                release_date: movie.release_date,
                 providers: movie.the_provider_id === "1" ? "넷플릭스" : "디즈니플러스"
             }
         })
@@ -76,7 +76,7 @@ export async function filterStreamingHorror(id: number, currentPage: number): Pr
             title: movie.title,
             posterPath: movie.poster_path,
             id: movie.movie_id,
-            releaseDate: movie.release_date,
+            release_date: movie.release_date,
             providers: movie.the_provider_id === "1" ? "넷플릭스" : "디즈니플러스"
         }
     })
@@ -127,58 +127,43 @@ export async function findStreamingHorrorKrById(id: string): Promise<StreamingDe
         .select('title, poster_path, id, overview, release_date, vote_average, vote_count, the_movie_db_id')
         .eq('id', id)
 
-    const result = await getMovieProviderByMovieId(id)
-    if (error || !data) {
+    if (error || !data || data.length === 0) {
         return {
             title: "Unknown",
-            posterPath: "Unknown",
+            poster_path: "Unknown",
             id: "Unknown",
             overview: "Unknown",
-            releaseDate: "Unknown",
+            release_date: "Unknown",
             providers: [],
-            voteAverage: "Unknown",
-            voteCount: "Unknown",
+            vote_average: 0,
+            vote_count: 0,
             the_movie_db_id: "Unknown",
             reviews: []
         }
     }
 
+    const result = await getMovieProviderByMovieId(id)
     const providers = result.map((provider: Provider) =>
         provider.the_provider_id === 1 ? "넷플릭스" : "Disney+"
     )
 
-    const { data : reviews, error : reviewsError  } = await supabase
+    const { data: reviews, error: reviewsError } = await supabase
         .from('reviews')
         .select('id, review_content')
         .eq('the_movie_db_id', data[0].the_movie_db_id as string)
 
-        if (reviewsError || !reviews) {
-            return {
-                title: data[0].title as string,
-                posterPath: data[0].poster_path as string,
-                id: data[0].id as string,
-                overview: data[0].overview as string,
-                releaseDate: data[0].release_date as string,
-                providers: providers,
-                voteAverage: data[0].vote_average as string,
-                voteCount: data[0].vote_count as string,
-                the_movie_db_id: data[0].the_movie_db_id as string,
-                reviews: []
-            }
-        }
-
-        return {
-            title: data[0].title as string,
-            posterPath: data[0].poster_path as string,
-            id: data[0].id as string,
-            overview: data[0].overview as string,
-            releaseDate: data[0].release_date as string,
-            providers: providers,
-            voteAverage: data[0].vote_average as string,
-            voteCount: data[0].vote_count as string,
-            the_movie_db_id: data[0].the_movie_db_id as string,
-            reviews: reviews.map((review: any) => review.review_content as string)
-        }
+    return {
+        title: data[0].title as string,
+        poster_path: data[0].poster_path as string,
+        id: data[0].id as string,
+        overview: data[0].overview as string,
+        release_date: data[0].release_date as string,
+        providers: providers,
+        vote_average: data[0].vote_average as number,
+        vote_count: data[0].vote_count as number,
+        the_movie_db_id: data[0].the_movie_db_id as string,
+        reviews: reviewsError || !reviews ? [] : reviews.map((review: any) => review.review_content as string)
+    }
 }
 
 export async function findStremingHorrorPage(the_provider_id: string, page: number): Promise<StreamingPageResponse[]> {
@@ -200,9 +185,9 @@ export async function findStremingHorrorPage(the_provider_id: string, page: numb
     return data.map((movie: any) => {
         return {
             title: movie.title,
-            posterPath: movie.poster_path,
+            poster_path: movie.poster_path,
             id: movie.id,
-            releaseDate: movie.release_date
+            release_date: movie.release_date
         }
     })
 }
