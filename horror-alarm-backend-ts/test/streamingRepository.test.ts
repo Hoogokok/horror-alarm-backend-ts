@@ -1,8 +1,8 @@
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { assertSpyCalls, spy } from "https://deno.land/std/testing/mock.ts";
-import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, setTestSupabase, findStreamingHorror } from "../streamingRepository.ts";
+import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, setTestSupabase, findStreamingHorror, findStreamingHorrorKrById } from "../streamingRepository.ts";
 import { setMockSql, clearMockSql } from "../db.ts";
-import { mockSupabaseClient } from "./mocks/supabaseMock.ts";
+import { mockSupabaseClient, mockSupabaseClientForMovie } from "./mocks/supabaseMock.ts";
 
 Deno.test("countStreamingAllHorror", async (t) => {
   const mockSql = spy((strings: TemplateStringsArray, ...values: any[]) => {
@@ -66,16 +66,16 @@ Deno.test("filterStreamingHorror", async (t) => {
     assertEquals(result.length, 2);
     assertEquals(result[0], {
       title: "영화1",
-      posterPath: "/path1.jpg",
+      poster_path: "/path1.jpg",
       id: "1",
-      releaseDate: "2023-01-01",
+      release_date: "2023-01-01",
       providers: "넷플릭스"
     });
     assertEquals(result[1], {
       title: "영화2",
-      posterPath: "/path2.jpg",
+      poster_path: "/path2.jpg",
       id: "2",
-      releaseDate: "2023-02-01",
+      release_date: "2023-02-01",
       providers: "디즈니플러스"
     });
 
@@ -92,9 +92,9 @@ Deno.test("filterStreamingHorror", async (t) => {
     assertEquals(result.length, 2);
     assertEquals(result[0], {
       title: "영화1",
-      posterPath: "/path1.jpg",
+      poster_path: "/path1.jpg",
       id: "1",
-      releaseDate: "2023-01-01",
+      release_date: "2023-01-01",
       providers: "넷플릭스"
     });
 
@@ -206,6 +206,80 @@ Deno.test("findStreamingHorror", async (t) => {
     const result = await findStreamingHorror(["tmdb1"]);
 
     assertEquals(result, []);
+  });
+});
+
+const mockMovieData = [
+  {
+    title: "테스트 영화",
+    poster_path: "/test_path.jpg",
+    id: "test_id",
+    overview: "테스트 개요",
+    release_date: "2023-01-01",
+    vote_average: 7.5,
+    vote_count: 1000,
+    the_movie_db_id: "tmdb_test_id"
+  }
+];
+
+const mockProviderData = [
+  { the_provider_id: 1 },
+  { the_provider_id: 2 }
+];
+
+const mockReviewData = [
+  { id: 1, review_content: "좋은 영화였습니다." },
+  { id: 2, review_content: "재미있었어요!" }
+];
+
+Deno.test("findStreamingHorrorKrById", async (t) => {
+  const mockClient = mockSupabaseClientForMovie(mockMovieData, mockProviderData, mockReviewData);
+  setTestSupabase(mockClient);
+
+  await t.step("영화 정보 정상 조회", async () => {
+    const result = await findStreamingHorrorKrById("test_id");
+
+    assertEquals(result, {
+      title: "테스트 영화",
+      poster_path: "/test_path.jpg",
+      id: "test_id",
+      overview: "테스트 개요",
+      release_date: "2023-01-01",
+      providers: ["넷플릭스", "Disney+"],
+      vote_average: 7.5,
+      vote_count: 1000,
+      the_movie_db_id: "tmdb_test_id",
+      reviews: ["좋은 영화였습니다.", "재미있었어요!"]
+    });
+  });
+
+  await t.step("존재하지 않는 영화 ID로 조회", async () => {
+    const errorClient = mockSupabaseClientForMovie([], [], []);
+    setTestSupabase(errorClient);
+
+    const result = await findStreamingHorrorKrById("non_existent_id");
+
+    assertEquals(result, {
+      title: "Unknown",
+      poster_path: "Unknown",
+      id: "Unknown",
+      overview: "Unknown",
+      release_date: "Unknown",
+      providers: [],
+      vote_average: 0,
+      vote_count: 0,
+      the_movie_db_id: "Unknown",
+      reviews: []
+    });
+  });
+
+  await t.step("리뷰 데이터 없을 때", async () => {
+    const noReviewClient = mockSupabaseClientForMovie(mockMovieData, mockProviderData, []);
+    setTestSupabase(noReviewClient);
+
+    const result = await findStreamingHorrorKrById("test_id");
+
+    assertEquals(result.reviews, []);
   });
 });
 
