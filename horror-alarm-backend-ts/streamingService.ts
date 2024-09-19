@@ -10,8 +10,8 @@ interface ExpiredMovie {
 interface NetflixExpiredResponse {
     id: string;
     title: string;
-    posterPath: string;
-    expiredDate: string;
+    poster_path: string;
+    expired_date: string;
 }
 
 initSupabase();
@@ -34,11 +34,11 @@ export async function getNetflixDetailResponse(id: string): Promise<StreamingDet
         return {
             id: "Unknown",
             title: "Unknown",
-            posterPath: "Unknown",
+            poster_path: "Unknown",
             overview: "Unknown",
-            releaseDate: "Unknown",
-            voteAverage: "Unknown",
-            voteCount: "Unknown",
+            release_date: "Unknown",
+            vote_average: 0,
+            vote_count: 0,
             the_movie_db_id: "Unknown",
             providers: [],
             reviews: []
@@ -47,11 +47,11 @@ export async function getNetflixDetailResponse(id: string): Promise<StreamingDet
     return {
         id: netflixHorrorKrById.id,
         title: netflixHorrorKrById.title,
-        posterPath: netflixHorrorKrById.posterPath,
+        poster_path: netflixHorrorKrById.poster_path,
         overview: netflixHorrorKrById.overview,
-        releaseDate: netflixHorrorKrById.releaseDate,
-        voteAverage: netflixHorrorKrById.voteAverage,
-        voteCount: netflixHorrorKrById.voteCount,
+        release_date: netflixHorrorKrById.release_date,
+        vote_average: netflixHorrorKrById.vote_average,
+        vote_count: netflixHorrorKrById.vote_count,
         providers: netflixHorrorKrById.providers,
         the_movie_db_id: netflixHorrorKrById.the_movie_db_id,
         reviews: netflixHorrorKrById.reviews
@@ -87,15 +87,15 @@ function makeNetflixResponse(expiringMovies: ExpiredMovie[], netflixHorrorKr: St
             return {
                 id: "Unknown",
                 title: "Unknown",
-                posterPath: "Unknown",
-                expiredDate: "Unknown",
+                poster_path: "Unknown",
+                expired_date: "Unknown",
             };
         }
         return {
             id: netflixHorror.id,
             title: netflixHorror.title,
-            posterPath: netflixHorror.poster_path,
-            expiredDate: movie.expired_date
+            poster_path: netflixHorror.poster_path,
+            expired_date: movie.expired_date
         }
     });
 }
