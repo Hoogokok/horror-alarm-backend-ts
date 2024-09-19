@@ -11,59 +11,87 @@
 이 프로젝트는 기존의 자바, 스프링로 작성된 스푸키 백엔드를 TypeScript로 다시 작성한 프로젝트이다. 
  
 
-### 이 API 서버가 제공해야하는 요청에 대한 설명
+### 이 API 서버가 제공하는 요청에 대한 설명
 
-스푸키 타운(이하 스푸키)의 백엔드 API 요청의 응답 값을 정리하기 위해 작성됐다.  스푸키 백엔드는 다음 네 가지 요청 url에 응답해야 한다. 
-1. Get("/api/upcoming")
-2. Get("/api/releasing")
-3. Get("/api/streaming/expired")
-4. Get("/api/streaming/expired/detail/{id}")
+스푸키 타운(이하 스푸키)의 백엔드 API 요청의 응답 값을 정리했습니다. 스푸키 백엔드는 다음 요청 URL에 응답합니다:
 
-각 URL의 응답은 자세하게 다음을 반환해야 한다.
+1. GET("/api/releasing")
+   상영 중인 영화 정보를 반환합니다.
+   ```json
+   [
+     {
+       "id": "문자열",
+       "title": "문자열",
+       "release_date": "YYYY-MM-DD",
+       "poster_path": "문자열",
+       "overview": "문자열",
+       "providers": ["문자열"],
+       "the_movie_db_id": "문자열",
+       "reviews": ["문자열"]
+     }
+   ]
+   ```
 
-## 1.   Get("/api/upcoming")
+2. GET("/api/upcoming")
+   상영 예정 영화 정보를 반환합니다. 응답 형식은 "/api/releasing"과 동일합니다.
 
-상영 예정 영화 정보를 반환한다.
+3. GET("/api/streaming/expired")
+   스트리밍 종료 예정인 영화의 정보를 반환합니다.
+   ```json
+   {
+     "expiredMovies": [
+       {
+         "id": "문자열",
+         "title": "문자열",
+         "poster_path": "문자열",
+         "expired_date": "YYYY-MM-DD"
+       }
+     ]
+   }
+   ```
 
-```
-title: 영화 제목(문자열)
-releaseDate: 개봉날짜(문자열 형식: yyyy-mm-dd)
-posterPath: 영화 포스터 uri
-overView: 영화에 대한 짧은 설명(문자열)
-theaters: 상영관 정보(형식은 배열)
-```
+4. GET("/api/streaming/expired/detail/{id}")
+   스트리밍 종료 예정 영화의 상세 정보를 반환합니다.
+   ```json
+   {
+     "id": "문자열",
+     "title": "문자열",
+     "poster_path": "문자열",
+     "overview": "문자열",
+     "release_date": "YYYY-MM-DD",
+     "vote_average": 숫자,
+     "vote_count": 숫자,
+     "the_movie_db_id": "문자열",
+     "providers": ["문자열"],
+     "reviews": ["문자열"]
+   }
+   ```
 
+5. GET("/api/streaming")
+   스트리밍 서비스의 총 페이지 수를 반환합니다.
+   ```json
+   숫자
+   ```
 
-## 2.  Get("/api/releasing")
+6. GET("/api/streaming/page")
+   스트리밍 서비스의 특정 페이지 영화 정보를 반환합니다.
+   ```json
+   [
+     {
+       "id": "문자열",
+       "title": "문자열",
+       "poster_path": "문자열",
+       "overview": "문자열",
+       "release_date": "YYYY-MM-DD",
+       "vote_average": 숫자,
+       "vote_count": 숫자,
+       "the_movie_db_id": "문자열",
+       "providers": ["문자열"]
+     }
+   ]
+   ```
 
-상영 중인 영화 정보를 반환한다. 데이터 형식은 상영 예정 영화 정보와 동일하다.
-
-```
-title: 영화 제목(문자열)
-releaseDate: 개봉날짜(문자열 형식: yyyy-mm-dd)
-posterPath: 영화 포스터 uri
-overView: 영화에 대한 짧은 설명(문자열)
-theaters: 상영관 정보(형식은 배열)
-```
-
-
-## 3. Get("/api/streaming/expired")
- 스트리밍 종료 예정인 영화의 정보를 반환한다.
- 
-```
-id: 영화 아이디(long)
-title: 영화 제목(문자열)
-posterPath: 영화 포스터 uri
-expiredDate: 스트리밍 종료일
-```
-
-
-
-## 4. Get("/api/streaming/expired/detail/{id}")
-파라미터 값으로 id를 반환하면 스트리밍 종료 예정 영화의 상세 정보를 반환한다.
-```
-title: 영화 제목(문자열)
-posterPath: 영화 포스터 uri
-overView: 영화에 대한 짧은 설명(문자열)
-```
-
+7. GET("/api/movie/{id}")
+   영화의 상세 정보를 반환합니다. 카테고리에 따라 응답이 다릅니다.
+   - 스트리밍 카테고리: "/api/streaming/expired/detail/{id}"와 동일한 응답
+   - 그 외 카테고리: "/api/releasing"의 단일 영화 응답과 동일
