@@ -4,8 +4,8 @@ export interface StreamingDetailResponse {
     posterPath: string;
     releaseDate: string;
     overview: string;
-    voteAverage: string;
-    voteCount: string;
+    voteAverage: number;
+    voteCount: number;
     providers: string[];
     the_movie_db_id: string;
     reviews: string[];
