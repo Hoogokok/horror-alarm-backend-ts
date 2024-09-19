@@ -33,3 +33,29 @@ export function mockSupabaseClientForMovie(movieData: any, providerData: any, re
     })
   };
 }
+
+export function mockSupabaseClientForStreamingPage(movieProviders: any[], movies: any[]) {
+  return {
+    from: (table: string) => ({
+      select: (columns: string) => ({
+        eq: (field: string, value: string) => {
+          if (table === 'movie_providers') {
+            return { data: movieProviders.filter(provider => provider[field] === value), error: null };
+          }
+          return { data: null, error: new Error('Table not found') };
+        },
+        in: (field: string, values: string[]) => ({
+          range: (start: number, end: number) => {
+            if (table === 'movie') {
+              return { 
+                data: movies.filter(movie => values.includes(movie.id)).slice(start, end + 1),
+                error: null 
+              };
+            }
+            return { data: null, error: new Error('Table not found') };
+          }
+        })
+      })
+    })
+  };
+}
