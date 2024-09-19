@@ -14,3 +14,22 @@ export function mockSupabaseClient(mockData: any) {
     })
   };
 }
+
+export function mockSupabaseClientForMovie(movieData: any, providerData: any, reviewData: any) {
+  return {
+    from: (table: string) => ({
+      select: (columns: string) => ({
+        eq: (field: string, value: string) => {
+          if (table === 'movie') {
+            return { data: movieData, error: null };
+          } else if (table === 'movie_providers') {
+            return { data: providerData, error: null };
+          } else if (table === 'reviews') {
+            return { data: reviewData, error: null };
+          }
+          return { data: null, error: new Error('Table not found') };
+        }
+      })
+    })
+  };
+}
