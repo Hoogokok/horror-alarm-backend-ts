@@ -1,8 +1,8 @@
 import { assertEquals } from "https://deno.land/std/testing/asserts.ts";
 import { assertSpyCalls, spy } from "https://deno.land/std/testing/mock.ts";
-import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, setTestSupabase, findStreamingHorror, findStreamingHorrorKrById } from "../streamingRepository.ts";
+import { countStreamingAllHorror, filterStreamingHorror, findByExpiredDateAfter, setTestSupabase, findStreamingHorror, findStreamingHorrorKrById, findStremingHorrorPage } from "../streamingRepository.ts";
 import { setMockSql, clearMockSql } from "../db.ts";
-import { mockSupabaseClient, mockSupabaseClientForMovie } from "./mocks/supabaseMock.ts";
+import { mockSupabaseClient, mockSupabaseClientForMovie, mockSupabaseClientForStreamingPage } from "./mocks/supabaseMock.ts";
 
 Deno.test("countStreamingAllHorror", async (t) => {
   const mockSql = spy((strings: TemplateStringsArray, ...values: any[]) => {
@@ -283,3 +283,56 @@ Deno.test("findStreamingHorrorKrById", async (t) => {
   });
 });
 
+
+Deno.test("findStremingHorrorPage", async (t) => {
+  const mockMovieProviders = [
+    { movie_id: "1", the_provider_id: "1" },
+    { movie_id: "2", the_provider_id: "1" },
+    { movie_id: "3", the_provider_id: "1" },
+  ];
+
+  const mockMovies = [
+    { title: "영화1", poster_path: "/path1.jpg", id: "1", release_date: "2023-01-01" },
+    { title: "영화2", poster_path: "/path2.jpg", id: "2", release_date: "2023-02-01" },
+    { title: "영화3", poster_path: "/path3.jpg", id: "3", release_date: "2023-03-01" },
+  ];
+
+  const mockClient = mockSupabaseClientForStreamingPage(mockMovieProviders, mockMovies);
+  setTestSupabase(mockClient);
+
+  await t.step("정상적인 페이지 조회", async () => {
+    const result = await findStremingHorrorPage("1", 0);
+
+    assertEquals(result, mockMovies);
+  });
+
+  await t.step("존재하지 않는 프로바이더 ID로 조회", async () => {
+    const result = await findStremingHorrorPage("999", 0);
+
+    assertEquals(result, []);
+  });
+
+  await t.step("범위를 벗어난 페이지 조회", async () => {
+    const result = await findStremingHorrorPage("1", 100);
+
+    assertEquals(result, []);
+  });
+
+  await t.step("에러 발생 시 빈 배열 반환", async () => {
+    const errorClient = {
+      from: () => ({
+        select: () => ({
+          eq: () => ({ data: null, error: new Error("Database error") }),
+          in: () => ({
+            range: () => ({ data: null, error: new Error("Database error") })
+          })
+        })
+      })
+    };
+    setTestSupabase(errorClient);
+
+    const result = await findStremingHorrorPage("1", 0);
+
+    assertEquals(result, []);
+  });
+});
